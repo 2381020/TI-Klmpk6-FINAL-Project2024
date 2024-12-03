@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Database {
 
     // URL, username, dan password database
-    private static final String URL = "jdbc:mysql://localhost:3306/todoapp"; // Ganti dengan URL database Anda
+    private static final String URL = "jdbc:mysql://localhost:3306/todoapp?useSSL=false"; // Tambahkan parameter opsional jika perlu
     private static final String USERNAME = "root"; // Ganti dengan username database Anda
     private static final String PASSWORD = ""; // Ganti dengan password database Anda
 
