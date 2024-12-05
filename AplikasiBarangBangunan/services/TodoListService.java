@@ -1,11 +1,27 @@
 package todoapp.services;
 
-import todoapp.entities.TodoList;
+import todoapp.entities.BarangBangunan;
+import java.util.List;
 
-public interface
-TodoListService {
-    TodoList[] getTodoList(); // Mengembalikan daftar TodoList
-    void addTodoList(String todo); // Menambahkan item ke TodoList
-    boolean removeTodoList(int number); // Menghapus item berdasarkan nomor
-    boolean editTodoList(int number, String newTodo); // Mengedit item TodoList
+public interface BarangBangunanService {
+
+    void tambahBarang(BarangBangunan barang);
+
+    boolean editBarang(String id, String namaBaru, Double hargaBaru);
+
+    boolean hapusBarang(String id);
+
+    List<BarangBangunan> getSemuaBarang();
+
+    BarangBangunan cariBarangById(String id);
+
+    List<BarangBangunan> cariBarangByNama(String nama);
+
+    List<BarangBangunan> sortirBarang(String kriteria);
+
+    int hitungJumlahBarang();
+
+    void eksporData(String filePath);
+
+    void imporData(String filePath);
 }
