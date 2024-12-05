@@ -1,46 +1,92 @@
 package todoapp.repositories;
 
-import entities.BarangBangunan;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.stereotype.Repository;
+import todoapp.entities.BarangBangunan;
 
-public class TodoListRepositoryImpl implements todoapp.repositories.TodoListRepository {
-    private final List<BarangBangunan> barangList = new ArrayList<>();
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Repository
+public class BarangBangunanRepositoryImpl implements BarangBangunanRepository {
+
+    private final List<BarangBangunan> dataBarang = new ArrayList<>();
 
     @Override
-    public List<BarangBangunan> getAllBarang() {
-        return barangList;
+    public void save(BarangBangunan barang) {
+        dataBarang.add(barang);
+        System.out.println("Barang berhasil disimpan: " + barang);
     }
 
     @Override
-    public BarangBangunan getBarangById(String id) {
-        for (BarangBangunan barang : barangList) {
+    public boolean update(String id, String namaBaru, Double hargaBaru) {
+        for (BarangBangunan barang : dataBarang) {
             if (barang.getId().equals(id)) {
-                return barang;
+                if (namaBaru != null && !namaBaru.isBlank()) {
+                    barang.setNama(namaBaru);
+                }
+                if (hargaBaru != null) {
+                    barang.setHarga(hargaBaru);
+                }
+                System.out.println("Barang berhasil diperbarui: " + barang);
+                return true;
             }
         }
-        return null;
-    }
-
-    @Override
-    public boolean addBarang(BarangBangunan barang) {
-        return barangList.add(barang);
-    }
-
-    @Override
-    public boolean updateBarang(BarangBangunan barang) {
-        BarangBangunan existingBarang = getBarangById(barang.getId());
-        if (existingBarang != null) {
-            existingBarang.setNama(barang.getNama());
-            existingBarang.setHarga(barang.getHarga());
-            return true;
-        }
+        System.out.println("Barang dengan ID " + id + " tidak ditemukan.");
         return false;
     }
 
     @Override
-    public boolean deleteBarang(String id) {
-        BarangBangunan barang = getBarangById(id);
-        return barangList.remove(barang);
+    public boolean delete(String id) {
+        boolean removed = dataBarang.removeIf(barang -> barang.getId().equals(id));
+        if (removed) {
+            System.out.println("Barang dengan ID " + id + " berhasil dihapus.");
+        } else {
+            System.out.println("Barang dengan ID " + id + " tidak ditemukan.");
+        }
+        return removed;
+    }
+
+    @Override
+    public List<BarangBangunan> findAll() {
+        return new ArrayList<>(dataBarang);
+    }
+
+    @Override
+    public BarangBangunan findById(String id) {
+        return dataBarang.stream()
+                .filter(barang -> barang.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public List<BarangBangunan> findByName(String name) {
+        return dataBarang.stream()
+                .filter(barang -> barang.getNama().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BarangBangunan> sort(String kriteria) {
+        Comparator<BarangBangunan> comparator;
+        switch (kriteria.toLowerCase()) {
+            case "id":
+                comparator = Comparator.comparing(BarangBangunan::getId);
+                break;
+            case "nama":
+                comparator = Comparator.comparing(BarangBangunan::getNama);
+                break;
+            case "harga":
+                comparator = Comparator.comparingDouble(BarangBangunan::getHarga);
+                break;
+            default:
+                throw new IllegalArgumentException("Kriteria sortir tidak valid: " + kriteria);
+        }
+        return dataBarang.stream().sorted(comparator).collect(Collectors.toList());
+    }
+
+    @Override
+    public int count() {
+        return dataBarang.size();
     }
 }
